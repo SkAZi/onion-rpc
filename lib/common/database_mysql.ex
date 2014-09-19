@@ -79,7 +79,7 @@ defmodule Onion.RPC.Database.MySQL do
             def select_field_names() do
                 @fields
                 |> Enum.map(fn({key, val})->
-                    case val do
+                    case val[:type] do
                         :timestamp -> "TIMESTAMP(#{key}) as #{key}"
                         _ -> key
                     end
