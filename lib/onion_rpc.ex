@@ -4,6 +4,11 @@ defmodule Onion.RPC do
 
     defmiddleware Resource do
 
+        def init(opts) do
+            model = opts[:model]
+            [{Onion.Common.ValidateArgs, [optional: model.fields, strict: true]}, {Resource, opts}]
+        end
+
         def process(:in, state = %{request: request}, opts) do
             model = opts[:model]
             allow = opts[:allow] || ["GET"]
