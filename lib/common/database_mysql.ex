@@ -115,7 +115,7 @@ defmodule Onion.RPC.Database.MySQL do
                     {nil, nil} -> q
                     {limit, nil} -> "#{q} LIMIT #{limit}"
                     {nil, offset} -> "#{q} OFFSET #{offset}"
-                    {limit, offset} -> "#{q} LIMIT #{limit},#{offset}"
+                    {limit, offset} -> "#{q} LIMIT #{offset},#{limit}"
                 end
             end
 
