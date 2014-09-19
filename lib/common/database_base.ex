@@ -12,7 +12,9 @@ defmodule Onion.RPC.Database.Base do
 
                     [{key, val[:type]}, 
                      {:"#{key}__notnull", :bool}, 
-                     {:"#{key}__isnull", :bool} 
+                     {:"#{key}__isnull", :bool},
+                     {:limit, :int},
+                     {:offset, :int}                     
                     | res ]
                 end)
                 |> List.flatten

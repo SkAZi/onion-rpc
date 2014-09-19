@@ -14,7 +14,7 @@ defmodule OnionRpc.Mixfile do
 
   defp deps do
     [
-      {:onion_common, github: "SkAZi/onion-common"}
+      {:onion_common, github: "SkAZi/onion-common"},
     ]
   end
 end
