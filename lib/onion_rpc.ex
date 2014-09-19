@@ -1,4 +1,5 @@
 defmodule Onion.RPC do
+    require Logger
     import Onion
     use Onion.RPC.Database
 
@@ -37,9 +38,11 @@ defmodule Onion.RPC do
                 _ -> nil
             end
 
+            Logger.info res
+
             case res do
                 nil -> reply(state, 400, "Bad request") |> break
-                _ -> reply state, 200, res
+                _ -> put_in(state, [:response, :query], res)
             end
         end
 
