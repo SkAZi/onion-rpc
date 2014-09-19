@@ -75,10 +75,22 @@ defmodule Onion.RPC.Database.MySQL do
                 query("UPDATE INTO #{@table_name} SET #{update_placeholder(keys)} WHERE #{Enum.join(pk_placeholder(), " AND ")}", values)
             end
 
+
+            def select_field_names() do
+                @fields
+                |> Enum.map(fn({key, val})->
+                    case val do
+                        :timestamp -> "TIMESTAMP(#{key}) as #{key}"
+                        _ -> key
+                    end
+                end)
+                |> Enum.join(",")
+            end
+
             def get(values) when is_list(values), do: get(values |> atomise)
             def get(values) when is_map(values) do
                 case all_pk?(values) do
-                    true -> query("SELECT #{Enum.join(@field_names, ",")} FROM #{@table_name} WHERE #{Enum.join(pk_placeholder(), " AND ")}", select_pks(values))
+                    true -> query("SELECT #{select_field_names()} FROM #{@table_name} WHERE #{Enum.join(pk_placeholder(), " AND ")}", select_pks(values))
                     false -> nil
                 end
             end
@@ -86,7 +98,7 @@ defmodule Onion.RPC.Database.MySQL do
 
             def select(filters, limit \\ nil) do
                 {keys, values, _opts} = get_filters(filters)
-                q = "SELECT #{Enum.join(@field_names, ",")} FROM #{@table_name}"
+                q = "SELECT #{select_field_names()} FROM #{@table_name}"
 
                 q = case length(keys) do
                     0 -> q
