@@ -44,7 +44,8 @@ defmodule Onion.RPC.Database do
                     structure = [ { unquote(name), (fn
                         (%{autoincrement: true})-> nil
                         (%{null: true})-> nil
-                        (%{default: default})-> default
+                        (%{default: default}) when is_function(default) -> default.()
+                        (%{default: default}) -> default
                         (%{null: false})-> {:error}
                     end).(Enum.into(unquote(args), %{})) } | structure ]
 
