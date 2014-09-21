@@ -21,28 +21,28 @@ defmodule Onion.RPC do
             end
 
             res = case {request[:method], allow == "*" or request[:method] in allow, obj} do
-                {_, _, nil} -> nil
+                {_, _, nil} -> {nil, false}
                 {"GET", true, obj} -> 
                     case model.all_pk?(obj) do
-                        true -> model.get(obj)
-                        false -> model.select(obj, 50)
+                        true -> {model.get(obj), false}
+                        false -> {model.select(obj, 50), true}
                     end
-                {"POST", true, obj} -> model.new(obj) |> model.insert
+                {"POST", true, obj} -> {model.new(obj) |> model.insert, false}
                 {"PUT", true, obj} -> 
                     case model.all_pk?(obj) do
-                        true -> model.new(obj) |> model.update
-                        false -> nil
+                        true -> {model.new(obj) |> model.update, false}
+                        false -> {nil, false}
                     end
-                {"PATCH", true, obj} -> model.update(obj)
-                {"DELETE", true, obj} -> model.delete(obj)
-                _ -> nil
+                {"PATCH", true, obj} -> {model.update(obj), false}
+                {"DELETE", true, obj} -> {model.delete(obj), false}
+                _ -> {nil, false}
             end
 
             Logger.info res
 
             case res do
-                nil -> reply(state, 400, "Bad request") |> break
-                _ -> put_in(state, [:response, :query], res)
+                {nil, _} -> reply(state, 400, "Bad request") |> break
+                res -> put_in(state, [:response, :query], res)
             end
         end
 

@@ -72,7 +72,7 @@ defmodule Onion.RPC.Database.MySQL do
                 {keys, values} = get_key_vals(up)
                 values = values ++ select_pks(obj)
 
-                query("UPDATE INTO #{@table_name} SET #{update_placeholder(keys)} WHERE #{Enum.join(pk_placeholder(), " AND ")}", values)
+                query("UPDATE #{@table_name} SET #{update_placeholder(keys)} WHERE #{Enum.join(pk_placeholder(), " AND ")}", values)
             end
 
 
