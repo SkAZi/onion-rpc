@@ -27,6 +27,11 @@ defmodule Onion.RPC.Database.MySQL do
 
             def query(sql, args), do: List.to_string List.flatten in_query sql, args
 
+            def mysql_order("-" <> order), do: "#{order} DESC"
+            def mysql_order("+" <> order), do: "#{order} ASC"
+            def mysql_order(order), do: order
+            def mysql_order_list(orders), do: orders |> Enum.map &mysql_order/1
+
             defp get_filters(args) do
                 args_to_filter(args)
                 |> Enum.filter_map(fn({key, op, _})->
@@ -107,8 +112,8 @@ defmodule Onion.RPC.Database.MySQL do
 
                 q = case filters[:order_by] do
                     nil -> q
-                    order when is_binary(order) -> "#{q} ORDER BY #{order}"
-                    order -> "#{q} ORDER BY #{Enum.join(order, ", ")}"
+                    order when is_binary(order) -> "#{q} ORDER BY #{order |> mysql_order}"
+                    order -> "#{q} ORDER BY #{Enum.join(order |> mysql_order_list, ", ")}"
                 end
 
                 case {filters[:limit] || limit, filters[:offset]} do

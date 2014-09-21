@@ -38,7 +38,7 @@ defmodule Onion.RPC do
                 _ -> {nil, false}
             end
 
-            Logger.info res
+            Logger.info inspect res
 
             case res do
                 {nil, _} -> reply(state, 400, "Bad request") |> break
