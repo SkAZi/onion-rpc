@@ -42,7 +42,7 @@ defmodule Onion.RPC.Database.MySQL do
                     ({key, :gt, val})-> {"#{key}>?", val}
                     ({key, :lte, val})-> {"#{key}<=?", val}
                     ({key, :gte, val})-> {"#{key}>=?", val}
-                    ({key, :like, val})-> {"#{key} LIKE %?%", val}
+                    ({key, :like, val})-> {"#{key} LIKE ?", val}
                     ({key, :isnull, _})-> {"#{key} IS NULL"}
                     ({key, :notnull, _})-> {"#{key} IS NOT NULL"}
                 end)
