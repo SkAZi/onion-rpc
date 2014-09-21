@@ -14,7 +14,8 @@ defmodule Onion.RPC.Database.Base do
                      {:"#{key}__notnull", :bool}, 
                      {:"#{key}__isnull", :bool},
                      {:limit, :int},
-                     {:offset, :int}                     
+                     {:offset, :int},
+                     {:where_term, :string}
                     | res ]
                 end)
                 |> List.flatten

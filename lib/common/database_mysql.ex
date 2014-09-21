@@ -42,7 +42,7 @@ defmodule Onion.RPC.Database.MySQL do
                     ({key, :gt, val})-> {"#{key}>?", val}
                     ({key, :lte, val})-> {"#{key}<=?", val}
                     ({key, :gte, val})-> {"#{key}>=?", val}
-                    ({key, :like, val})-> {"#{key} LIKE ?"}
+                    ({key, :like, val})-> {"#{key} LIKE %?%", val}
                     ({key, :isnull, _})-> {"#{key} IS NULL"}
                     ({key, :notnull, _})-> {"#{key} IS NOT NULL"}
                 end)
@@ -107,7 +107,9 @@ defmodule Onion.RPC.Database.MySQL do
 
                 q = case length(keys) do
                     0 -> q
-                    _ -> query("#{q} WHERE #{Enum.join(keys, " AND ")}", values)
+                    _ ->    
+                        where_term = Enum.join(keys, " #{filters[:where_term] || "AND"} ")
+                        query("#{q} WHERE #{where_term}", values)
                 end
 
                 q = case filters[:order_by] do
@@ -126,7 +128,6 @@ defmodule Onion.RPC.Database.MySQL do
 
             def delete(obj) when is_list(obj), do: delete(obj |> atomise)
             def delete(obj) when is_map(obj) do
-                IO.inspect({obj, all_pk?(obj)})
                 cond do
                     obj[:__dirty__] == true -> nil
                     all_pk?(obj) -> query("DELETE FROM #{@table_name}
