@@ -42,7 +42,7 @@ defmodule Onion.RPC do
 
             case res do
                 {nil, _} -> reply(state, 400, "Bad request") |> break
-                res -> patch(state, :context, res)
+                res -> patch(state, :query, res)
             end
         end
 
